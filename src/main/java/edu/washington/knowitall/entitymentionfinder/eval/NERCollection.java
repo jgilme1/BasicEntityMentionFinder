@@ -125,7 +125,7 @@ public class NERCollection {
 			for(File testDocument: testDocuments){
 				String testDocName = testDocument.getName();
 				if(!testDocName.endsWith(".ann")){
-					String annoDocName = testDocName + ".ann";
+					String annoDocName = testDocName + ".annSetup";
 					String annoDocPath = testDocument.getParent()+"/"+annoDocName;
 					PrintWriter pw = new PrintWriter(new File(annoDocPath));
 					String docText = FileUtils.readFileToString(testDocument);

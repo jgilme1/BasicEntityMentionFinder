@@ -25,6 +25,22 @@ public class EvaluateNamedEntityCollectionSystem {
 			int totalNumCorrectGuesses =0;
 			int totalAnnotations = 0;
 			int correctAnswers =0;
+			
+			int totalPERBestMentions = 0;
+			int totalPERGuesses =0;
+			int totalCorrectPERGuesses = 0;
+		
+			int totalLOCBestMentions = 0;
+			int totalLOCGuesses =0;
+			int totalCorrectLOCGuesses = 0;
+			
+			int totalORGBestMentions = 0;
+			int totalORGGuesses =0;
+			int totalCorrectORGGuesses = 0;
+			
+			
+			
+			
 			File[] files = testCorpusDirectory.listFiles();
 			for(File f: files){
 				String fileName = f.getName();
@@ -104,18 +120,49 @@ public class EvaluateNamedEntityCollectionSystem {
 						BestMentionAnnotation labelledBma = labelledBestMentionAnnotations.get(i);
 						BestMentionAnnotation systemBma = systemBestMentionAnnotations.get(i);
 						
+						NamedEntity labelledNE = labelledBma.getNamedEntity();
+						String nerType = labelledNE.getNerType();
+						
 						String guessedBestMention = systemBma.getBestMentionName();
 						String actualBestMention = labelledBma.getBestMentionName();
 						String originalMention = labelledBma.getNamedEntity().getProcessedName();
 						
 						if(!originalMention.equals(actualBestMention)){
 							documentNumBestMentions ++;
+							
+							if(nerType.equals("LOCATION")){
+								totalLOCBestMentions++;
+							}
+							if(nerType.equals("ORGANIZATION")){
+								totalORGBestMentions++;
+							}
+							if(nerType.equals("PERSON")){
+								totalPERBestMentions++;
+							}
 						}
 						
 						if(!originalMention.equals(guessedBestMention)){
 							documentNumGuesses ++;
+							if(nerType.equals("LOCATION")){
+								totalLOCGuesses++;
+							}
+							if(nerType.equals("ORGANIZATION")){
+								totalORGGuesses++;
+							}
+							if(nerType.equals("PERSON")){
+								totalPERGuesses++;
+							}
 							if(guessedBestMention.equals(actualBestMention)){
 								documentNumCorrectGuesses++;
+								if(nerType.equals("LOCATION")){
+									totalCorrectLOCGuesses++;
+								}
+								if(nerType.equals("ORGANIZATION")){
+									totalCorrectORGGuesses++;
+								}
+								if(nerType.equals("PERSON")){
+									totalCorrectPERGuesses++;
+								}
 							}
 						}
 						
@@ -151,8 +198,38 @@ public class EvaluateNamedEntityCollectionSystem {
 			pwResults.write("Number of Correct Best Mention Guesses: " + totalNumCorrectGuesses+"\n");
 			pwResults.write("Precision: " + precision+"\n");
 			pwResults.write("Recall: " + recall+"\n");
-			pwResults.write("Overall Precision: " + overallPrecision+"\n");
-			pwResults.close();
+			pwResults.write("Overall Precision: " + overallPrecision+"\n\n\n");
+			
+			
+			double perPrecision = totalPERGuesses > 0 ? ((double) totalCorrectPERGuesses) / ((double) totalPERGuesses) : -1.0;
+			double perRecall = totalPERBestMentions > 0 ? (((double) totalCorrectPERGuesses) / ((double) totalPERBestMentions)) : -1.0;
+			pwResults.write("Number of Person Best Mentions: " + totalPERBestMentions + "\n");
+			pwResults.write("Number of Person Best Mention Guesses: " + totalPERGuesses + "\n");
+			pwResults.write("Number of Correct Person Best Mention Guesses: " + totalCorrectPERGuesses + "\n");
+			pwResults.write("PER Precision: " + perPrecision +"\n");
+			pwResults.write("PER Recall: " + perRecall + "\n");
+			pwResults.write("\n\n\n");
+			
+			
+			double orgPrecision = totalORGGuesses > 0 ? ((double) totalCorrectORGGuesses) / ((double) totalORGGuesses) : -1.0;
+			double orgRecall = totalORGBestMentions > 0 ? (((double) totalCorrectORGGuesses) / ((double) totalORGBestMentions)) : -1.0;
+			pwResults.write("Number of Organization Best Mentions: " + totalORGBestMentions + "\n");
+			pwResults.write("Number of Organization Best Mention Guesses: " + totalORGGuesses + "\n");
+			pwResults.write("Number of Correct Organization Best Mention Guesses: " + totalCorrectORGGuesses + "\n");
+			pwResults.write("ORG Precision: " + orgPrecision +"\n");
+			pwResults.write("ORG Recall: " + orgRecall + "\n");
+			pwResults.write("\n\n\n");
+			
+			
+			double locPrecision = totalLOCGuesses > 0 ? ((double) totalCorrectLOCGuesses) / ((double) totalLOCGuesses) : -1.0;
+			double locRecall = totalLOCBestMentions > 0 ? (((double) totalCorrectLOCGuesses) / ((double) totalLOCBestMentions)) : -1.0;
+			pwResults.write("Number of Location Best Mentions: " + totalLOCBestMentions + "\n");
+			pwResults.write("Number of Location Best Mention Guesses: " + totalLOCGuesses + "\n");
+			pwResults.write("Number of Correct Location Best Mention Guesses: " + totalCorrectLOCGuesses + "\n");
+			pwResults.write("LOC Precision: " + locPrecision +"\n");
+			pwResults.write("LOC Recall: " + locRecall + "\n");
+			
+			
 			
 			pwResults.close();
 			

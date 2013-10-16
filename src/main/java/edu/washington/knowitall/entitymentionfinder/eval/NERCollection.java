@@ -124,13 +124,14 @@ public class NERCollection {
 			File[] testDocuments = testCorpus.listFiles();
 			for(File testDocument: testDocuments){
 				String testDocName = testDocument.getName();
-				if(!testDocName.endsWith(".ann")){
-					String annoDocName = testDocName + ".annSetup";
+				if(testDocName.endsWith(".sgm")){
+					String annoDocName = testDocName + ".annSetup";	
 					String annoDocPath = testDocument.getParent()+"/"+annoDocName;
 					PrintWriter pw = new PrintWriter(new File(annoDocPath));
 					String docText = FileUtils.readFileToString(testDocument);
+					System.err.println(testDocName);
 					List<NamedEntity> namedEntities = nc.collectNamedEntitiesFromDocument(docText);
-					//write to .ann file
+					//write to .annSetup file
 					pw.write(testDocName+"\n");
 					
 					for(NamedEntity ne : namedEntities){

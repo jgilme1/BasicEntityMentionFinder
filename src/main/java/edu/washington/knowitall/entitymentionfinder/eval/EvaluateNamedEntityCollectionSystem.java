@@ -23,6 +23,8 @@ public class EvaluateNamedEntityCollectionSystem {
 			int totalNumGuesses =0;
 			int totalNumBestMentions = 0;
 			int totalNumCorrectGuesses =0;
+			int totalAnnotations = 0;
+			int correctAnswers =0;
 			File[] files = testCorpusDirectory.listFiles();
 			for(File f: files){
 				String fileName = f.getName();
@@ -115,7 +117,14 @@ public class EvaluateNamedEntityCollectionSystem {
 							if(guessedBestMention.equals(actualBestMention)){
 								documentNumCorrectGuesses++;
 							}
-						}		
+						}
+						
+						if(guessedBestMention.equals(actualBestMention)){
+							correctAnswers ++;
+						}
+							
+							
+						totalAnnotations++;
 					}
 					
 					double precision = documentNumGuesses > 0 ? ((double) documentNumCorrectGuesses) / ((double) documentNumGuesses) : -1.0; 
@@ -136,11 +145,13 @@ public class EvaluateNamedEntityCollectionSystem {
 			PrintWriter pwResults = new PrintWriter(testCorpusDirectory.getPath()+"/results.out");
 			double precision = totalNumGuesses > 0 ? ((double) totalNumCorrectGuesses) / ((double) totalNumGuesses) : -1.0; 
 			double recall = totalNumBestMentions > 0 ? (((double) totalNumCorrectGuesses) / ((double) totalNumBestMentions)) : -1.0;
+			double overallPrecision = ((double)correctAnswers) / ((double)totalAnnotations);
 			pwResults.write("Number of Best Mentions: " + totalNumBestMentions+"\n");
 			pwResults.write("Number of Best Mention Guesses: " + totalNumGuesses+"\n");
 			pwResults.write("Number of Correct Best Mention Guesses: " + totalNumCorrectGuesses+"\n");
 			pwResults.write("Precision: " + precision+"\n");
 			pwResults.write("Recall: " + recall+"\n");
+			pwResults.write("Overall Precision: " + overallPrecision+"\n");
 			pwResults.close();
 			
 			pwResults.close();
